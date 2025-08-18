@@ -4,48 +4,44 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.simplesprignapplication.model.Product;
+import com.example.simplesprignapplication.repository.ProductRepository;
 
 @Service
 public class ProductService {
-    List<Product> productList=new ArrayList<>( Arrays.asList(
-        new Product(1,"mobile",100),
-        new Product(2,"laptop",5000)));
+    @Autowired
+     private ProductRepository producRepository;
+
+    // List<Product> productList=new ArrayList<>( Arrays.asList(
+    //     new Product(1,"mobile",100),
+    //     new Product(2,"laptop",5000)));
     public List<Product> getProductList(){
         
-        return productList;
+        return producRepository.findAll();
     }
 
     public Product getProductById(int productId) {
     
-        return productList.stream().filter(p -> p.getProductId() == productId)
-        .findFirst().get();
+        return producRepository.findById((long) productId).orElseThrow();
     }
 
     public void addProduct(Product product) {
        
-       productList.add(product);
+       producRepository.save(product);
     }
 
     public void updateProduct(Product product) {
-        int index=getIndexById(product.getProductId());
-        productList.set(index, product);
+       
+        producRepository.save(product);
     }
 
     public void deleteProduct(int productId){
-        int index = getIndexById(productId);
-        productList.remove(index);
+            producRepository.deleteById((long) productId);
     }
 
-    private int getIndexById(int productId){
-        int index=0;
-            for(int i=0;i<productList.size();i++)
-            if(productList.get(i).getProductId()==productId)
-                index=i;
 
-        return index;
-    }
 
 }
